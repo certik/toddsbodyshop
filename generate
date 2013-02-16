@@ -1,0 +1,34 @@
+#! /usr/bin/env python
+
+import os
+
+from jinja2 import Environment, FileSystemLoader
+env = Environment(loader=FileSystemLoader('templates'))
+
+templates = [
+        "index.html",
+        "about.html",
+        "forms.html",
+        "insurance.html",
+        "blog.html",
+        "faq.html",
+        "contact.html",
+        ]
+
+output_dir = "_build"
+os.system("rm -rf %s" % output_dir)
+os.system("mkdir %s" % output_dir)
+os.system("cp -r static %s" % output_dir)
+for template in templates:
+    t = env.get_template(template)
+    print "Processing '%s'" % template
+    name = os.path.splitext(template)[0]
+    ctx = {
+            "IMAGES": "static/images",
+            "CSS": "static/css",
+            "JS": "static/js",
+            "STATIC": "static",
+            name + "_selected": "current_page_item",
+            }
+    s = t.render(ctx)
+    open(os.path.join(output_dir, template), "w").write(s.encode("utf-8"))
